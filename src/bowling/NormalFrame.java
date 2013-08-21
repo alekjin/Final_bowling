@@ -1,11 +1,23 @@
 package bowling;
 
-/**
- * Created with IntelliJ IDEA.
- * User: alekjin
- * Date: 8/18/13
- * Time: 3:06 오후
- * To change this template use File | Settings | File Templates.
- */
-public class NormalFrame {
+public class NormalFrame extends Frame {
+
+    NormalFrame() {
+        numOfPins.add(-1);
+        numOfPins.add(-1);
+    }
+
+    protected void setScore() {
+        resetEntirePins();
+        for (int i = 0; i < MAX_CHANCE; i++) {
+            takeAShot(i);
+            getEntirePins(i);
+
+            if (isFirstShotStrike()) {
+                break;
+            }
+        }
+    }
+
+
 }
