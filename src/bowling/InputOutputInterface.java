@@ -1,6 +1,6 @@
 package bowling;
 
-public interface ExecuteStrategy {
+public interface InputOutputInterface {
     int inputInt();
 
     String inputString();

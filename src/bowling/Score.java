@@ -57,7 +57,7 @@ public class Score {
 
         scoreList.set(9, firstScore + secondScore + bonusScore);
 
-        System.out.println(scoreList);
+//        System.out.println(scoreList);
     }
 
     ArrayList getScoreList() {

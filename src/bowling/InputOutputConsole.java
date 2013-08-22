@@ -2,7 +2,7 @@ package bowling;
 
 import java.util.Scanner;
 
-public class ExecuteConsole implements ExecuteStrategy {
+public class InputOutputConsole implements InputOutputInterface {
     public int inputInt() {
         Scanner scanner = new Scanner(System.in);
         return scanner.nextInt();

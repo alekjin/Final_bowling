@@ -18,7 +18,7 @@ public class ScoreBoard {
     private final String BOTTOMLINE     = "┗━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━━┛";
 
     private StringBuilder scoreBoard = new StringBuilder();
-    private ExecuteStrategy executeStrategy = new ExecuteConsole();
+    private InputOutputInterface InputOutputInterface = new InputOutputConsole();
     private ArrayList<Frame> frameList = new ArrayList<Frame>();
     private ArrayList<Integer> scoreList = new ArrayList<Integer>();
     private ArrayList<Integer> scoreCumulativeList = new ArrayList<Integer>();
@@ -28,7 +28,6 @@ public class ScoreBoard {
         this.frameList = frameList;
         this.scoreList = score.getScoreList();
         this.nowFrame = nowFrame;
-        printScoreBoard();
     }
 
     void printScoreBoard() {
@@ -40,7 +39,7 @@ public class ScoreBoard {
                 BOTTOMMIDLINE + NEW_LINE +
                 makeTotalScoreLine() + NEW_LINE +
                 BOTTOMLINE + NEW_LINE);
-        executeStrategy.print(scoreBoard);
+        InputOutputInterface.print(scoreBoard);
     }
 
     StringBuilder makeScoreLine() {
@@ -81,7 +80,7 @@ public class ScoreBoard {
                 stringBuilder.append(makeEachFrameScore(nowFrame + 1));
         }
 
-        if (nowFrame > 0) {
+        if (nowFrame > 0 & nowFrame != 9) {
             if (frameList.get(nowFrame).isFirstShotStrike()) {
                 if (frameList.get(nowFrame-1).isFirstShotStrike())
                     stringBuilder.append(makeEachFrameScore(nowFrame - 1));
@@ -96,6 +95,9 @@ public class ScoreBoard {
 
 
         }
+
+        if (nowFrame == 9)
+            stringBuilder.append(makeEachFrameScore(nowFrame));
         return stringBuilder;
     }
 
@@ -154,5 +156,10 @@ public class ScoreBoard {
 
 
         return stringBuilder;
+    }
+
+    int getFinalScore() {
+        System.out.println(scoreCumulativeList.size());
+        return scoreCumulativeList.get(9);
     }
 }

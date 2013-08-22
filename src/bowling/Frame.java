@@ -6,7 +6,8 @@ public abstract class Frame {
     protected final int MAX_PINS = 10;
     protected int MAX_CHANCE = 2;
     protected int entirePins;
-    protected ExecuteStrategy executeStrategy = new ExecuteConsole();
+    protected InputOutputInterface InputOutputInterface = new InputOutputConsole();
+    protected PinStrategy pinStrategy = new PinStrategyAuto();
     protected ArrayList<Integer> numOfPins = new ArrayList<Integer>();
 
     Frame() {
@@ -27,12 +28,13 @@ public abstract class Frame {
     }
 
     protected void takeAShot(int i) {
-        executeStrategy.print("Roll the " + (i + 1) + " Ball!");
+        InputOutputInterface.print("Roll the " + (i + 1) + " Ball!");
+
         while (isNotOverPins(i)) {
-            executeStrategy.print("Write Score : ");
-            setPins(i, executeStrategy.inputInt());
+            InputOutputInterface.print("Write Score : ");
+            setPins(i, pinStrategy.getNumofPins());
             if (isNotOverPins(i))
-                executeStrategy.print("Write Correct Number ( 0 <= num <= " + entirePins + " )");
+                InputOutputInterface.print("Write Correct Number ( 0 <= num <= " + entirePins + " )");
         }
 
     }

@@ -5,19 +5,19 @@ import java.util.ArrayList;
 public class OneManGame {
     private Score score = new Score();
     private ArrayList<Frame> frameSet = new ArrayList<Frame>();
-    private ExecuteStrategy executeStrategy = new ExecuteConsole();
+    private InputOutputInterface InputOutputInterface = new InputOutputConsole();
 
     OneManGame() {
-        executeStrategy.print("Enter Your Name : ");
-        String name = executeStrategy.inputString();
-        executeStrategy.print("Hi! " + name + ", Welcome to Bowling Game!");
+        InputOutputInterface.print("Enter Your Name : ");
+        String name = InputOutputInterface.inputString();
+        InputOutputInterface.print("Hi! " + name + ", Welcome to Bowling Game!");
 
         initialize();
         execute();
     }
 
     void rollABall(int i) {
-        executeStrategy.print((i + 1) + " Frame!");
+        InputOutputInterface.print((i + 1) + " Frame!");
         frameSet.get(i).setScore();
     }
 
@@ -32,7 +32,7 @@ public class OneManGame {
 
             rollABall(i);
             score.getScore(frameSet);
-            new ScoreBoard(frameSet, score, i);
+            new ScoreBoard(frameSet, score, i).printScoreBoard();
         }
     }
 }
