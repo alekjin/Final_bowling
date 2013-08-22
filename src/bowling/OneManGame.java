@@ -3,15 +3,13 @@ package bowling;
 import java.util.ArrayList;
 
 public class OneManGame {
-    private String name;
     private Score score = new Score();
-    private ScoreBoard scoreBoard;
     private ArrayList<Frame> frameSet = new ArrayList<Frame>();
     private ExecuteStrategy executeStrategy = new ExecuteConsole();
 
     OneManGame() {
         executeStrategy.print("Enter Your Name : ");
-        name = executeStrategy.inputString();
+        String name = executeStrategy.inputString();
         executeStrategy.print("Hi! " + name + ", Welcome to Bowling Game!");
 
         initialize();
@@ -31,9 +29,10 @@ public class OneManGame {
 
     void execute() {
         for (int i = 0; i < 10; i++) {
+
             rollABall(i);
             score.getScore(frameSet);
-            new ScoreBoard(frameSet, score);
+            new ScoreBoard(frameSet, score, i);
         }
     }
 }

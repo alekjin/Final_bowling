@@ -5,8 +5,8 @@ import java.util.ArrayList;
 public class Score {
     private ArrayList<Object> scoreList = new ArrayList<Object>();
 
-    private int firstScore = 0;
-    private int secondScore = 0;
+    private int firstScore;
+    private int secondScore;
 
     private int firstBonusScore;
     private int secondBonusScore;
@@ -28,10 +28,11 @@ public class Score {
             firstBonusScore = frameList.get(i + 1).countPins(0);
             secondBonusScore = frameList.get(i + 1).countPins(1);
 
-            if (frameList.get(i).isFirstShotStrike())
+            if (frameList.get(i).isFirstShotStrike()) {
                 scoreList.set(i, firstScore + firstBonusScore + secondBonusScore);
-            if (frameList.get(i + 1).isFirstShotStrike())
-                scoreList.set(i, firstScore + firstBonusScore + frameList.get(i + 2).countPins(0));
+                if (frameList.get(i+1).isFirstShotStrike())
+                    scoreList.set(i, firstScore + firstBonusScore + frameList.get(i+2).countPins(0));
+            }
             else if (frameList.get(i).isSecondShotSpare())
                 scoreList.set(i, firstScore + secondScore + firstBonusScore);
             else
@@ -47,6 +48,8 @@ public class Score {
             scoreList.set(8, firstScore + firstBonusScore + secondBonusScore);
         else if (frameList.get(8).isSecondShotSpare())
             scoreList.set(8, firstScore + secondScore + firstBonusScore);
+        else
+            scoreList.set(8, firstScore + secondScore);
 
         firstScore = frameList.get(9).countPins(0);
         secondScore = frameList.get(9).countPins(1);

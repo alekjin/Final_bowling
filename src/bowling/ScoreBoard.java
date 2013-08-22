@@ -1,42 +1,39 @@
 package bowling;
 
-import javax.lang.model.type.ArrayType;
 import java.util.ArrayList;
-import java.util.List;
 
 public class ScoreBoard {
-    private final int MAX_PIN = 10;
     private final String STRIKE = "X";
     private final String SPARE = "/";
-    private final String ERROR = "F";
     private final String ZERO = "-";
+    private final String BLANK = " ";
+    private final String FOURBLANK = "    ";
+    private final String SIXBLANK = "      ";
     private final String NEW_LINE = System.getProperty("line.separator");
-    private final String HORIZON = "━";
     private final String VERTICAL = "┃";
-    private final String CROSS = "╋";
     private final String TOPLINE        = "┏━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━━┓";
     private final String FRAMELINE      = "┃ ① ┃ ② ┃ ③ ┃ ④ ┃ ⑤ ┃ ⑥ ┃ ⑦ ┃ ⑧ ┃ ⑨ ┃  ⑩  ┃";
     private final String TOPMIDLINE     = "┣━━╋━━╋━━╋━━╋━━╋━━╋━━╋━━╋━━╋━━━┫";
-    private final String SCORELINE      = "┃-┃2┃2┃2┃2┃4┃/┃3┃9┃4┃3┃3┃3┃4┃2┃4┃6┃5┃3┃3 6┃";
     private final String BOTTOMMIDLINE  = "┣━━╋━━╋━━╋━━╋━━╋━━╋━━╋━━╋━━╋━━━┫";
-    private final String TOTALSCORELINE = "┃  56┃  34┃  34┃  34┃  34┃  34┃  23┃  23┃  23┃    23┃";
     private final String BOTTOMLINE     = "┗━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━━┛";
 
     private StringBuilder scoreBoard = new StringBuilder();
     private ExecuteStrategy executeStrategy = new ExecuteConsole();
     private ArrayList<Frame> frameList = new ArrayList<Frame>();
     private ArrayList<Integer> scoreList = new ArrayList<Integer>();
-//    private int nowFrame;
+    private ArrayList<Integer> scoreCumulativeList = new ArrayList<Integer>();
+    private int nowFrame;
 
-    ScoreBoard(ArrayList<Frame> frameList, Score score) {
+    ScoreBoard(ArrayList<Frame> frameList, Score score, int nowFrame) {
         this.frameList = frameList;
         this.scoreList = score.getScoreList();
-//        this.nowFrame = nowFrame;
+        this.nowFrame = nowFrame;
         printScoreBoard();
     }
 
     void printScoreBoard() {
-        scoreBoard.append(TOPLINE + NEW_LINE +
+        scoreBoard.append(
+                TOPLINE + NEW_LINE +
                 FRAMELINE + NEW_LINE +
                 TOPMIDLINE + NEW_LINE +
                 makeScoreLine() + NEW_LINE +
@@ -49,58 +46,113 @@ public class ScoreBoard {
     StringBuilder makeScoreLine() {
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (int i = 0 ; i < 9 ; i++)
-        {
+        for (int i = 0 ; i < 10 ; i++) {
             if (frameList.get(i).isFirstShotStrike())
                 stringBuilder.append(
-                        "┃ ┃" + STRIKE
+                    VERTICAL + BLANK + VERTICAL + STRIKE
                 );
 
             else if (frameList.get(i).isSecondShotSpare())
                 stringBuilder.append(
-                        "┃" + getScore(i, 0) + "┃" + STRIKE
+                    VERTICAL + getScore(i, 0) + VERTICAL + SPARE
                 );
 
             else
                 stringBuilder.append(
-                    "┃" + getScore(i, 0) + "┃" + getScore(i, 1)
+                    VERTICAL + getScore(i, 0) + VERTICAL + getScore(i, 1)
                 );
         }
-
             stringBuilder.append(
-                "┃" + getScore(9, 0) + "┃" + getScore(9, 1) + " " + getScore(9, 2) + "┃"
+               BLANK + getScore(9, 2) + VERTICAL
             );
         return stringBuilder;
     }
 
     StringBuilder makeTotalScoreLine() {
         StringBuilder stringBuilder = new StringBuilder();
-        int scoreSum = 0;
-        String.format("% 4d", scoreSum);
+        calcScore();
 
-
-
-        for (int i = 0 ; i < 9 ; i++) {
-            scoreSum = scoreSum + scoreList.get(i);
-            stringBuilder.append(
-                 "┃" + String.format("% 4d", scoreSum)
-            );
+        if (nowFrame == 0) {
+            if (frameList.get(nowFrame).isFirstShotStrike())
+                stringBuilder.append(makeEachFrameScore(nowFrame));
+            else if (frameList.get(nowFrame).isSecondShotSpare())
+                stringBuilder.append(makeEachFrameScore(nowFrame));
+            else
+                stringBuilder.append(makeEachFrameScore(nowFrame + 1));
         }
 
-        scoreSum = scoreSum + scoreList.get(9);
-        stringBuilder.append(
-                "┃" + String.format("% 6d", scoreSum) + "┃"
-        );
+        if (nowFrame > 0) {
+            if (frameList.get(nowFrame).isFirstShotStrike()) {
+                if (frameList.get(nowFrame-1).isFirstShotStrike())
+                    stringBuilder.append(makeEachFrameScore(nowFrame - 1));
+                else
+                    stringBuilder.append(makeEachFrameScore(nowFrame));
+            }
+            else if (frameList.get(nowFrame).isSecondShotSpare()) {
+                stringBuilder.append(makeEachFrameScore(nowFrame));
+            }
+            else
+                stringBuilder.append(makeEachFrameScore(nowFrame + 1));
 
 
+        }
         return stringBuilder;
     }
 
     String getScore(int frameNum, int pinNum) {
+        if (frameList.get(frameNum).countPins(pinNum) == 10)
+            return STRIKE;
+        if (frameList.get(frameNum).getPins(pinNum) == -1)
+            return BLANK;
         if (frameList.get(frameNum).countPins(pinNum) == 0)
             return ZERO;
-        else if (frameList.get(frameNum).countPins(pinNum) == 10)
-            return STRIKE;
+
         return String.valueOf(frameList.get(frameNum).countPins(pinNum));
+    }
+
+    void calcScore() {
+        for (int i = 0 ; i < 10 ; i++)
+            scoreCumulativeList.add(0);
+
+        for (int i = 0 ; i < 10 ; i++)
+            scoreCumulativeList.set(i, calcCumulativeScore(i+1));
+
+        System.out.println(scoreCumulativeList);
+    }
+
+    int calcCumulativeScore(int frame) {
+        int sum = 0;
+        for (int i = 0 ; i < frame ; i++)
+            sum = sum + scoreList.get(i);
+        return sum;
+    }
+
+    StringBuilder makeEachFrameScore(int nowframe) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (int i = 0 ; i < nowframe ; i++) {
+            stringBuilder.append(
+                    VERTICAL + String.format("% 4d", scoreCumulativeList.get(i))
+            );
+        }
+
+        for (int i = nowframe ; i < 9 ; i++) {
+            stringBuilder.append(
+                    VERTICAL + FOURBLANK
+            );
+        }
+
+        if (frameList.get(nowframe).getClass() == LastFrame.class)
+            stringBuilder.append(
+                    VERTICAL + String.format("% 6d", scoreCumulativeList.get(nowframe)) + VERTICAL
+            );
+
+        if (frameList.get(nowframe).getClass() == NormalFrame.class)
+            stringBuilder.append(
+                    VERTICAL + SIXBLANK + VERTICAL
+            );
+
+
+        return stringBuilder;
     }
 }
