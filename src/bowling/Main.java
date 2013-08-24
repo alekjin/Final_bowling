@@ -1,7 +1,7 @@
 package bowling;
 
-public class BowlingGame {
+public class Main {
     public static void main(String[] args) {
-        new OneManGame();
+        new Game();
     }
 }

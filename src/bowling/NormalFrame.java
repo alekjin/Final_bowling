@@ -1,23 +1,22 @@
 package bowling;
 
+import java.util.ArrayList;
+
 public class NormalFrame extends Frame {
+    private ArrayList<Shot> shots = new ArrayList<Shot>();
 
-    NormalFrame() {
-        numOfPins.add(-1);
-        numOfPins.add(-1);
+    NormalFrame(FrameStatus nowFrameStatus) {
+        super(nowFrameStatus);
     }
 
-    protected void setScore() {
-        resetEntirePins();
-        for (int i = 0; i < MAX_CHANCE; i++) {
-            takeAShot(i);
-            getEntirePins(i);
-
-            if (isFirstShotStrike()) {
-                break;
-            }
-        }
+    @Override
+    void initializeFrame() {
+        shots.add(new Shot());
+        shots.add(new Shot());
     }
 
-
+    @Override
+    void startFrame () {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 }
